@@ -1,0 +1,196 @@
+Assignment 4:
+
+class Node:
+    def __init__(self, roll, name, marks):
+        self.roll = roll
+        self.name = name
+        self.marks = marks
+        self.next = None
+
+
+class StudentLinkedList:
+    def __init__(self):
+        self.head = None
+
+    def add(self, roll, name, marks):
+        new_node = Node(roll, name, marks)
+        if self.head is None:
+            self.head = new_node
+        else:
+            temp = self.head
+            while temp.next:
+                temp = temp.next
+            temp.next = new_node
+        print("Record added successfully!")
+
+    def delete(self, roll):
+        temp = self.head
+        prev = None
+        if temp is None:
+            print("List is empty!")
+            return
+        if temp.roll == roll:
+            self.head = temp.next
+            print("Record deleted successfully!")
+            return
+        while temp and temp.roll != roll:
+            prev = temp
+            temp = temp.next
+        if temp is None:
+            print("Record not found!")
+        else:
+            prev.next = temp.next
+            print("Record deleted successfully!")
+
+    def update(self, roll, name=None, marks=None):
+        temp = self.head
+        while temp:
+            if temp.roll == roll:
+                if name:
+                    temp.name = name
+                if marks is not None:
+                    temp.marks = marks
+                print("Record updated successfully!")
+                return
+            temp = temp.next
+        print("Record not found!")
+
+    def search(self, roll):
+        temp = self.head
+        while temp:
+            if temp.roll == roll:
+                print(f"Found -> Roll: {temp.roll}, Name: {temp.name}, Marks: {temp.marks}")
+                return
+            temp = temp.next
+        print("Record not found!")
+
+    def display(self):
+        temp = self.head
+        if temp is None:
+            print("No records found!")
+            return
+        print("\n--- Student Records ---")
+        while temp:
+            print(f"Roll: {temp.roll}, Name: {temp.name}, Marks: {temp.marks}")
+            temp = temp.next
+
+    # Helper functions for sorting keys
+    def get_roll(self, record):
+        return record[0]
+
+    def get_marks(self, record):
+        return record[2]
+
+    def sort(self, key="roll", reverse=False):
+        if self.head is None or self.head.next is None:
+            return
+
+        # Extract all records into a list
+        records = []
+        temp = self.head
+        while temp:
+            records.append((temp.roll, temp.name, temp.marks))
+            temp = temp.next
+
+        # Sort the list without lambda, using helper functions
+        if key == "roll":
+            # Simple bubble sort for educational clarity
+            for i in range(len(records)):
+                for j in range(0, len(records) - i - 1):
+                    if (self.get_roll(records[j]) > self.get_roll(records[j + 1])) != reverse:
+                        records[j], records[j + 1] = records[j + 1], records[j]
+        elif key == "marks":
+            for i in range(len(records)):
+                for j in range(0, len(records) - i - 1):
+                    if (self.get_marks(records[j]) > self.get_marks(records[j + 1])) != reverse:
+                        records[j], records[j + 1] = records[j + 1], records[j]
+
+        # Rebuild linked list
+        self.head = None
+        for roll, name, marks in records:
+            self.add(roll, name, marks)
+
+
+def main():
+    slist = StudentLinkedList()
+
+    while True:
+        print("\n--- Student Record Management System ---")
+        print("1. Add Record")
+        print("2. Delete Record")
+        print("3. Update Record")
+        print("4. Search Record")
+        print("5. Display All Records")
+        print("6. Sort by Roll Number Ascending")
+        print("7. Sort by Roll Number Descending")
+        print("8. Sort by Marks Ascending")
+        print("9. Sort by Marks Descending")
+        print("10. Exit")
+
+        choice = input("Enter choice (1-10): ")
+
+        if choice == "1":
+            try:
+                roll = int(input("Enter Roll Number: "))
+                name = input("Enter Name: ")
+                marks = int(input("Enter Marks: "))
+                slist.add(roll, name, marks)
+            except ValueError:
+                print("Invalid input! Roll number and marks should be numbers.")
+
+        elif choice == "2":
+            try:
+                roll = int(input("Enter Roll Number to delete: "))
+                slist.delete(roll)
+            except ValueError:
+                print("Invalid input! Roll number should be a number.")
+
+        elif choice == "3":
+            try:
+                roll = int(input("Enter Roll Number to update: "))
+                name = input("Enter New Name (leave blank to skip): ")
+                marks_input = input("Enter New Marks (leave blank to skip): ")
+                marks = int(marks_input) if marks_input else None
+                slist.update(roll, name if name else None, marks)
+            except ValueError:
+                print("Invalid input! Roll number and marks should be numbers.")
+
+        elif choice == "4":
+            try:
+                roll = int(input("Enter Roll Number to search: "))
+                slist.search(roll)
+            except ValueError:
+                print("Invalid input! Roll number should be a number.")
+
+        elif choice == "5":
+            slist.display()
+
+        elif choice == "6":
+            slist.sort(key="roll", reverse=False)
+            print("Records sorted by Roll Number (Ascending).")
+
+        elif choice == "7":
+            slist.sort(key="roll", reverse=True)
+            print("Records sorted by Roll Number (Descending).")
+
+        elif choice == "8":
+            slist.sort(key="marks", reverse=False)
+            print("Records sorted by Marks (Ascending).")
+
+        elif choice == "9":
+            slist.sort(key="marks", reverse=True)
+            print("Records sorted by Marks (Descending).")
+
+        elif choice == "10":
+            print("Exiting... Goodbye!")
+            break
+
+        else:
+            print("Invalid choice! Please enter a number between 1 and 10.")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
